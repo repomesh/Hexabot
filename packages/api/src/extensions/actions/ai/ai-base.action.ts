@@ -123,7 +123,11 @@ export abstract class AiBaseAction<
     // Most hosted providers need an API key; skip strict enforcement for custom/local providers.
     const providerId = this.getProviderId(provider);
 
-    return providerId === 'openai' || providerId === 'gateway';
+    return (
+      providerId === 'openai' ||
+      providerId === 'gateway' ||
+      providerId === 'litellm'
+    );
   }
 
   protected async loadProvider(
@@ -141,6 +145,10 @@ export abstract class AiBaseAction<
       const { createGatewayProvider } = await import('@ai-sdk/gateway');
 
       return createGatewayProvider(options);
+    }
+
+    if (providerId === 'litellm') {
+      return createOpenAI(options);
     }
 
     const moduleCandidates = new Set<string>([
