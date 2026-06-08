@@ -36,6 +36,7 @@ export const vercelAiSdkProviders = [
   'huggingface',
   'hume',
   'klingai',
+  'litellm',
   'lmnt',
   'luma',
   'mistral',
@@ -85,7 +86,7 @@ export const aiModelBindingSchema = z.strictObject({
       'ui:options': {
         showWhen: {
           field: 'provider',
-          equals: 'gateway',
+          equals: ['gateway', 'litellm'],
         },
       },
     }),

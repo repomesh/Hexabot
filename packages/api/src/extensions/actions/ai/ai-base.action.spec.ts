@@ -230,6 +230,7 @@ describe('AiBaseAction', () => {
     it('enforces api key for hosted providers', () => {
       expect(action.shouldRequireApiKeyPublic('openai')).toBe(true);
       expect(action.shouldRequireApiKeyPublic('gateway')).toBe(true);
+      expect(action.shouldRequireApiKeyPublic('litellm')).toBe(true);
     });
 
     it('allows local providers without api key', () => {
@@ -261,6 +262,21 @@ describe('AiBaseAction', () => {
       const result = await action.loadProviderPublic('gateway', options);
 
       expect(createGatewayProvider).toHaveBeenCalledWith(options);
+      expect(result).toBe(provider);
+    });
+
+    it('loads litellm provider via createOpenAI with compatible mode', async () => {
+      const provider = createProviderStub();
+      const options: ProviderInitOptions = {
+        apiKey: 'sk-litellm-key',
+        baseURL: 'http://localhost:4000/v1',
+      };
+
+      (createOpenAI as jest.Mock).mockReturnValue(provider);
+
+      const result = await action.loadProviderPublic('litellm', options);
+
+      expect(createOpenAI).toHaveBeenCalledWith(options);
       expect(result).toBe(provider);
     });
 
