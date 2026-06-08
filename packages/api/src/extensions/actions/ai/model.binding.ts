@@ -86,7 +86,7 @@ export const aiModelBindingSchema = z.strictObject({
       'ui:options': {
         showWhen: {
           field: 'provider',
-          equals: ['gateway', 'litellm'],
+          in: ['gateway', 'litellm'],
         },
       },
     }),
