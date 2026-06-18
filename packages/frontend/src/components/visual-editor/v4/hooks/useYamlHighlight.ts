@@ -11,103 +11,129 @@ import { LineCounter, parseDocument, type YAMLMap } from "yaml";
 
 const HIGHLIGHT_CLASS = "workflow-yaml-node-def-highlight";
 
+type HighlightState = {
+  defName: string | null;
+  startLine: number | null;
+  endLine: number | null;
+  decorationIds: string[];
+};
+
+const EMPTY_HIGHLIGHT_STATE: HighlightState = {
+  defName: null,
+  startLine: null,
+  endLine: null,
+  decorationIds: [],
+};
+
 export function useYamlHighlight(
   editorRef: MutableRefObject<editor.IStandaloneCodeEditor | null>,
   monacoRef: MutableRefObject<Monaco | null>,
   highlightDef?: string,
   onHighlightClear?: () => void,
 ) {
-  const defHighlightDecorationsRef = useRef<string[]>([]);
-  const activeHighlightDefRef = useRef<string | null>(null);
-  const highlightRangeRef = useRef<{
-    startLine: number;
-    endLine: number;
-  } | null>(null);
+  const highlightStateRef = useRef<HighlightState>({
+    ...EMPTY_HIGHLIGHT_STATE,
+  });
   const onHighlightClearRef = useRef(onHighlightClear);
   const highlightDefRef = useRef(highlightDef);
 
   onHighlightClearRef.current = onHighlightClear;
   highlightDefRef.current = highlightDef;
 
-  const revealNodeDef = useCallback((defName: string) => {
-    const editorInstance = editorRef.current;
-    const monacoInstance = monacoRef.current;
+  /**
+   * Clears Monaco decorations and resets the local highlight tracking state.
+   * Does NOT call onHighlightClear — callers decide whether to fire that.
+   */
+  const applyHighlightClear = useCallback(
+    (editorInstance: editor.IStandaloneCodeEditor) => {
+      highlightStateRef.current.decorationIds = editorInstance.deltaDecorations(
+        highlightStateRef.current.decorationIds,
+        [],
+      );
+      highlightStateRef.current = { ...EMPTY_HIGHLIGHT_STATE };
+    },
+    [],
+  );
+  const revealNodeDef = useCallback(
+    (defName: string) => {
+      const editorInstance = editorRef.current;
+      const monacoInstance = monacoRef.current;
 
-    if (!editorInstance || !monacoInstance) return;
+      if (!editorInstance || !monacoInstance) return;
 
-    const model = editorInstance.getModel();
+      const model = editorInstance.getModel();
 
-    if (!model) return;
+      if (!model) return;
 
-    try {
-      const lineCounter = new LineCounter();
-      const doc = parseDocument(model.getValue(), { lineCounter });
-      const defsMap = doc.getIn(["defs"], true) as YAMLMap | undefined;
+      try {
+        const lineCounter = new LineCounter();
+        const doc = parseDocument(model.getValue(), { lineCounter });
+        const defsMap = doc.getIn(["defs"], true) as YAMLMap | undefined;
 
-      if (!defsMap || !("items" in defsMap)) return;
+        if (!defsMap || !("items" in defsMap)) return;
 
-      const pair = defsMap.items.find(
-        (item) =>
-          item &&
-          typeof item === "object" &&
-          "key" in item &&
-          item.key !== null &&
-          typeof item.key === "object" &&
-          "value" in item.key &&
-          (item.key as { value: unknown }).value === defName,
-      ) as
-        | {
-            key: { range?: [number, number, number] };
-            value: { range?: [number, number, number] };
-          }
-        | undefined;
+        const pair = defsMap.items.find(
+          (item) =>
+            item &&
+            typeof item === "object" &&
+            "key" in item &&
+            item.key !== null &&
+            typeof item.key === "object" &&
+            "value" in item.key &&
+            (item.key as { value: unknown }).value === defName,
+        ) as
+          | {
+              key: { range?: [number, number, number] };
+              value: { range?: [number, number, number] };
+            }
+          | undefined;
 
-      if (!pair?.key?.range || !pair?.value?.range) return;
+        if (!pair?.key?.range || !pair?.value?.range) return;
 
-      const keyOffset = pair.key.range[0];
-      const valueContentEnd = pair.value.range[1];
-      const startLine = lineCounter.linePos(keyOffset).line;
-      const endOffset =
-        valueContentEnd > keyOffset ? valueContentEnd - 1 : keyOffset;
-      const endLine = lineCounter.linePos(endOffset).line;
-
-      activeHighlightDefRef.current = defName;
-      highlightRangeRef.current = { startLine, endLine };
-      defHighlightDecorationsRef.current = editorInstance.deltaDecorations(
-        defHighlightDecorationsRef.current,
-        [
-          {
-            range: new monacoInstance.Range(startLine, 1, endLine, 1),
-            options: {
-              isWholeLine: true,
-              className: HIGHLIGHT_CLASS,
-              overviewRuler: {
-                color: "hsla(174,58%,38%,0.8)",
-                position: monacoInstance.editor.OverviewRulerLane.Full,
+        const keyOffset = pair.key.range[0];
+        const valueContentEnd = pair.value.range[1];
+        const startLine = lineCounter.linePos(keyOffset).line;
+        const endOffset =
+          valueContentEnd > keyOffset ? valueContentEnd - 1 : keyOffset;
+        const endLine = lineCounter.linePos(endOffset).line;
+        const decorationIds = editorInstance.deltaDecorations(
+          highlightStateRef.current.decorationIds,
+          [
+            {
+              range: new monacoInstance.Range(startLine, 1, endLine, 1),
+              options: {
+                isWholeLine: true,
+                className: HIGHLIGHT_CLASS,
+                overviewRuler: {
+                  color: "hsla(174,58%,38%,0.8)",
+                  position: monacoInstance.editor.OverviewRulerLane.Full,
+                },
               },
             },
-          },
-        ],
-      );
-      // ScrollType.Immediate (1) sets scroll synchronously — prevents Monaco's
-      // own initial-render requestAnimationFrame from resetting it to position 0.
-      editorInstance.revealLinesInCenter(startLine, endLine, 1);
-    } catch {
-      // If YAML parsing fails, do nothing
-    }
-  }, []);
+          ],
+        );
+
+        highlightStateRef.current = {
+          defName,
+          startLine,
+          endLine,
+          decorationIds,
+        };
+        // ScrollType.Immediate (1) sets scroll synchronously — prevents Monaco's
+        // own initial-render requestAnimationFrame from resetting it to position 0.
+        editorInstance.revealLinesInCenter(startLine, endLine, 1);
+      } catch {
+        // If YAML parsing fails, do nothing
+      }
+    },
+    [editorRef, monacoRef],
+  );
   const clearNodeDefHighlight = useCallback(() => {
     const editorInstance = editorRef.current;
 
     if (!editorInstance) return;
-
-    activeHighlightDefRef.current = null;
-    highlightRangeRef.current = null;
-    defHighlightDecorationsRef.current = editorInstance.deltaDecorations(
-      defHighlightDecorationsRef.current,
-      [],
-    );
-  }, []);
+    applyHighlightClear(editorInstance);
+  }, [applyHighlightClear, editorRef]);
   /**
    * Call inside Monaco's `onMount` after setting `editorRef.current`.
    * Reveals the current `highlightDef` (if any) and registers the mousedown
@@ -119,7 +145,13 @@ export function useYamlHighlight(
         revealNodeDef(highlightDefRef.current);
       }
       editorInstance.onMouseDown((e) => {
-        if (!activeHighlightDefRef.current || !highlightRangeRef.current) {
+        const state = highlightStateRef.current;
+
+        if (
+          !state.defName ||
+          state.startLine === null ||
+          state.endLine === null
+        ) {
           return;
         }
 
@@ -127,20 +159,15 @@ export function useYamlHighlight(
 
         if (
           clickedLine === undefined ||
-          clickedLine < highlightRangeRef.current.startLine ||
-          clickedLine > highlightRangeRef.current.endLine
+          clickedLine < state.startLine ||
+          clickedLine > state.endLine
         ) {
-          activeHighlightDefRef.current = null;
-          highlightRangeRef.current = null;
-          defHighlightDecorationsRef.current = editorInstance.deltaDecorations(
-            defHighlightDecorationsRef.current,
-            [],
-          );
+          applyHighlightClear(editorInstance);
           onHighlightClearRef.current?.();
         }
       });
     },
-    [revealNodeDef],
+    [applyHighlightClear, revealNodeDef],
   );
 
   // React to highlightDef changes after the editor is already mounted
@@ -152,7 +179,7 @@ export function useYamlHighlight(
     } else {
       clearNodeDefHighlight();
     }
-  }, [highlightDef, revealNodeDef, clearNodeDefHighlight]);
+  }, [clearNodeDefHighlight, editorRef, highlightDef, revealNodeDef]);
 
   return { setupHighlightOnMount };
 }

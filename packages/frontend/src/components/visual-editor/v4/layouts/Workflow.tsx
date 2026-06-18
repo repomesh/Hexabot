@@ -178,13 +178,8 @@ export const Workflow = () => {
   const graphColorMode: WorkflowGraphColorMode =
     mode === "light" || mode === "dark" ? mode : "system";
   const workflowGraphRef = useRef<WorkflowGraphHandle | null>(null);
-  const {
-    activeCodeDef,
-    activeCodeDefName,
-    onViewNodeCode,
-    onActiveDefChange,
-    clearActiveCodeDef,
-  } = useWorkflowNodeCode();
+  const { activeCodeDef, onViewNodeCode, clearActiveCodeDef } =
+    useWorkflowNodeCode();
   const executionStates = useWorkflowExecutionState(selectedFlowId);
   const focusNodeIds = useMemo(
     () =>
@@ -937,7 +932,7 @@ export const Workflow = () => {
       onNodeClick: handleGraphNodeClick,
       onRotate: handleRotate,
       onViewNodeCode,
-      activeCodeDefName,
+      activeCodeDefName: activeCodeDef,
     }),
     [
       handleAddBinding,
@@ -947,7 +942,7 @@ export const Workflow = () => {
       removeStepAtPath,
       clearActiveCodeDef,
       onViewNodeCode,
-      activeCodeDefName,
+      activeCodeDef,
     ],
   );
 
@@ -957,7 +952,7 @@ export const Workflow = () => {
         onNew={handleNewWorkflow}
         onEdit={handleEditWorkflow}
         activeCodeDef={activeCodeDef}
-        onActiveDefChange={onActiveDefChange}
+        onActiveDefChange={clearActiveCodeDef}
       />
       <StyledBox>
         <WorkflowGraph

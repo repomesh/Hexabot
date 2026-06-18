@@ -398,7 +398,7 @@ export const FlowsDrawer = ({
   const handleToggleDrawer = () => {
     setOpen((prev) => {
       setLocalStorage(drawerIsOpenStorage, !prev ? "true" : "");
-      if (prev) onActiveDefChange?.(null); // drawer closing — deactivate button
+      if (prev) onActiveDefChange?.(); // drawer closing — deactivate button
 
       return !prev;
     });
@@ -418,7 +418,7 @@ export const FlowsDrawer = ({
   );
   const handleToggleYaml = () => {
     setShowYaml((prev) => {
-      if (prev) onActiveDefChange?.(null); // switching away from YAML — deactivate button
+      if (prev) onActiveDefChange?.(); // switching away from YAML — deactivate button
 
       return !prev;
     });
@@ -430,7 +430,7 @@ export const FlowsDrawer = ({
   const handleToggleVersions = () => {
     setShowVersions((prev) => !prev);
     setShowYaml(false);
-    onActiveDefChange?.(null); // switching to versions view — deactivate button
+    onActiveDefChange?.(); // switching to versions view — deactivate button
     if (!open) {
       setOpen(true);
     }
@@ -438,29 +438,27 @@ export const FlowsDrawer = ({
   const handleOpenDrawer = () => {
     setShowYaml(false);
     setShowVersions(false);
-    onActiveDefChange?.(null); // switching to flows list — deactivate button
+    onActiveDefChange?.(); // switching to flows list — deactivate button
     setOpen(true);
   };
-  // Refs to read latest state inside the effect without adding them as deps
-  const showYamlRef = useRef(showYaml);
+  const setLocalStorageRef = useRef(setLocalStorage);
 
-  showYamlRef.current = showYaml;
-  const openRef = useRef(open);
-
-  openRef.current = open;
+  setLocalStorageRef.current = setLocalStorage;
 
   // React to externally controlled activeCodeDef
   useEffect(() => {
     if (!activeCodeDef) return;
 
     setShowVersions(false);
-    if (!openRef.current) {
-      setOpen(true);
-      setLocalStorage(drawerIsOpenStorage, "true");
-    }
-    if (!showYamlRef.current) setShowYaml(true);
+    setOpen((prevOpen) => {
+      if (!prevOpen) {
+        setLocalStorageRef.current(drawerIsOpenStorage, "true");
+      }
+
+      return true;
+    });
+    setShowYaml(true);
     // highlight/reveal handled entirely via the highlightDef prop on YamlEditor
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeCodeDef]);
   const handleToggleType = (key: string) =>
     setOpenTypeKeys((prev) =>
@@ -574,7 +572,7 @@ export const FlowsDrawer = ({
               <Divider />
               <YamlEditorContainer>
                 <YamlEditor
-                  onHighlightClear={() => onActiveDefChange?.(null)}
+                  onHighlightClear={() => onActiveDefChange?.()}
                   highlightDef={activeCodeDef ?? undefined}
                 />
               </YamlEditorContainer>

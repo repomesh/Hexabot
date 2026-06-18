@@ -22,22 +22,14 @@ export function useWorkflowNodeCode() {
   const onViewNodeCode = useCallback((defName: string) => {
     setActiveCodeDef((prev) => (prev === defName ? undefined : defName));
   }, []);
-  /** Called by FlowsDrawer when the highlight is cleared internally (e.g. Monaco click outside highlighted range). */
-  const onActiveDefChange = useCallback((defName: string | null) => {
-    setActiveCodeDef(defName ?? undefined);
-  }, []);
-  /** Called when a node is removed — clears the highlight. */
+  /** Clears the active highlight. */
   const clearActiveCodeDef = useCallback(() => {
     setActiveCodeDef(undefined);
   }, []);
 
   return {
-    /** Pass as `activeCodeDef` prop to FlowsDrawer. */
     activeCodeDef,
-    /** Pass as `activeCodeDefName` in WorkflowGraphCallbacks. */
-    activeCodeDefName: activeCodeDef,
     onViewNodeCode,
-    onActiveDefChange,
     clearActiveCodeDef,
   };
 }

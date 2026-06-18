@@ -14,7 +14,7 @@ export type FlowsDrawerProps = {
   onNew?: () => void;
   onEdit?: (workflow: Workflow) => void;
   activeCodeDef?: string;
-  onActiveDefChange?: (defName: string | null) => void;
+  onActiveDefChange?: () => void;
 };
 
 export type FlowTypeKey = WorkflowType | string;

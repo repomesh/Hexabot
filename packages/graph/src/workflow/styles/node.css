@@ -182,7 +182,10 @@
 
 .workflow-node-see-code-button:hover,
 .workflow-node-see-code-button:focus-visible,
-.workflow-node-see-code-button--active {
+.workflow-node-see-code-button--active,
+.workflow-graph.dark .workflow-node-see-code-button:hover,
+.workflow-graph.dark .workflow-node-see-code-button:focus-visible,
+.workflow-graph.dark .workflow-node-see-code-button--active {
   background-color: color-mix(
     in srgb,
     var(--template-palette-primary-main) 20%,
@@ -192,7 +195,8 @@
   outline: none;
 }
 
-.workflow-node-see-code-button--active {
+.workflow-node-see-code-button--active,
+.workflow-graph.dark .workflow-node-see-code-button--active {
   background-color: color-mix(
     in srgb,
     var(--template-palette-primary-main) 30%,
@@ -217,27 +221,6 @@
   background-color: #0f172a;
   border-color: #334155;
   box-shadow: 0 2px 6px #0000008a;
-}
-
-.workflow-graph.dark .workflow-node-see-code-button:hover,
-.workflow-graph.dark .workflow-node-see-code-button:focus-visible,
-.workflow-graph.dark .workflow-node-see-code-button--active {
-  background-color: color-mix(
-    in srgb,
-    var(--template-palette-primary-main) 20%,
-    transparent
-  );
-  border-color: var(--template-palette-primary-main);
-}
-
-.workflow-graph.dark .workflow-node-see-code-button--active {
-  color: var(--template-palette-primary-main);
-  background-color: color-mix(
-    in srgb,
-    var(--template-palette-primary-main) 30%,
-    transparent
-  ) !important;
-  border-color: var(--template-palette-primary-main);
 }
 
 .workflow-branch-placeholder {
