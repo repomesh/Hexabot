@@ -10,26 +10,20 @@ import { useCallback, useState } from "react";
  * Manages the "See Code" feature: tracks which node's def is currently
  * highlighted in the YAML editor.
  *
- * State semantics:
- *   string    → that def is active (YAML highlighted)
- *   undefined → no active highlight
+ *   string → that def is active (YAML highlighted)
+ *   null   → no active highlight
  */
 export function useWorkflowNodeCode() {
-  const [activeCodeDef, setActiveCodeDef] = useState<string | undefined>(
-    undefined,
-  );
-  /** Called by the graph "See Code" button — toggles highlight on/off. */
-  const onViewNodeCode = useCallback((defName: string) => {
-    setActiveCodeDef((prev) => (prev === defName ? undefined : defName));
-  }, []);
-  /** Clears the active highlight. */
-  const clearActiveCodeDef = useCallback(() => {
-    setActiveCodeDef(undefined);
+  const [activeCodeDef, setActiveCodeDef] = useState<string | null>(null);
+  /**
+   * Toggle highlight for a def, or clear it.
+   * Called with no args (or null) to clear; with a def name to toggle.
+   */
+  const setActive = useCallback((defName?: string | null) => {
+    setActiveCodeDef((prev) =>
+      !defName ? null : prev === defName ? null : defName,
+    );
   }, []);
 
-  return {
-    activeCodeDef,
-    onViewNodeCode,
-    clearActiveCodeDef,
-  };
+  return { activeCodeDef, setActive };
 }

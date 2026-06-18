@@ -7,23 +7,9 @@
 import type { Monaco } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
 import { useCallback, useEffect, useRef, type MutableRefObject } from "react";
-import { LineCounter, parseDocument, type YAMLMap } from "yaml";
+import { isScalar, parseDocument, type YAMLMap } from "yaml";
 
 const HIGHLIGHT_CLASS = "workflow-yaml-node-def-highlight";
-
-type HighlightState = {
-  defName: string | null;
-  startLine: number | null;
-  endLine: number | null;
-  decorationIds: string[];
-};
-
-const EMPTY_HIGHLIGHT_STATE: HighlightState = {
-  defName: null,
-  startLine: null,
-  endLine: null,
-  decorationIds: [],
-};
 
 export function useYamlHighlight(
   editorRef: MutableRefObject<editor.IStandaloneCodeEditor | null>,
@@ -31,57 +17,60 @@ export function useYamlHighlight(
   highlightDef?: string,
   onHighlightClear?: () => void,
 ) {
-  const highlightStateRef = useRef<HighlightState>({
-    ...EMPTY_HIGHLIGHT_STATE,
-  });
+  const decorationsRef = useRef<string[]>([]);
+  const rangeRef = useRef<{ startLine: number; endLine: number } | null>(null);
   const onHighlightClearRef = useRef(onHighlightClear);
   const highlightDefRef = useRef(highlightDef);
 
   onHighlightClearRef.current = onHighlightClear;
   highlightDefRef.current = highlightDef;
 
-  /**
-   * Clears Monaco decorations and resets the local highlight tracking state.
-   * Does NOT call onHighlightClear — callers decide whether to fire that.
-   */
-  const applyHighlightClear = useCallback(
-    (editorInstance: editor.IStandaloneCodeEditor) => {
-      highlightStateRef.current.decorationIds = editorInstance.deltaDecorations(
-        highlightStateRef.current.decorationIds,
-        [],
-      );
-      highlightStateRef.current = { ...EMPTY_HIGHLIGHT_STATE };
+  /** Remove decorations and reset range; optionally notify parent. */
+  const clearHighlight = useCallback(
+    (notify = false) => {
+      const editorInstance = editorRef.current;
+
+      if (editorInstance) {
+        decorationsRef.current = editorInstance.deltaDecorations(
+          decorationsRef.current,
+          [],
+        );
+      }
+      rangeRef.current = null;
+      if (notify) {
+        onHighlightClearRef.current?.();
+      }
     },
-    [],
+    [editorRef],
   );
-  const revealNodeDef = useCallback(
-    (defName: string) => {
+  /** Apply or clear highlight for the given definition name. */
+  const setHighlight = useCallback(
+    (defName: string | null) => {
       const editorInstance = editorRef.current;
       const monacoInstance = monacoRef.current;
 
-      if (!editorInstance || !monacoInstance) return;
+      if (!editorInstance || !monacoInstance || !defName) {
+        clearHighlight();
+
+        return;
+      }
 
       const model = editorInstance.getModel();
 
       if (!model) return;
 
       try {
-        const lineCounter = new LineCounter();
-        const doc = parseDocument(model.getValue(), { lineCounter });
+        const doc = parseDocument(model.getValue());
         const defsMap = doc.getIn(["defs"], true) as YAMLMap | undefined;
 
-        if (!defsMap || !("items" in defsMap)) return;
+        if (!defsMap?.items) return;
 
-        const pair = defsMap.items.find(
-          (item) =>
-            item &&
-            typeof item === "object" &&
-            "key" in item &&
-            item.key !== null &&
-            typeof item.key === "object" &&
-            "value" in item.key &&
-            (item.key as { value: unknown }).value === defName,
-        ) as
+        const pair = defsMap.items.find((item) => {
+          if (!item || typeof item !== "object" || !("key" in item))
+            return false;
+
+          return isScalar(item.key) && item.key.value === defName;
+        }) as
           | {
               key: { range?: [number, number, number] };
               value: { range?: [number, number, number] };
@@ -90,14 +79,14 @@ export function useYamlHighlight(
 
         if (!pair?.key?.range || !pair?.value?.range) return;
 
-        const keyOffset = pair.key.range[0];
-        const valueContentEnd = pair.value.range[1];
-        const startLine = lineCounter.linePos(keyOffset).line;
-        const endOffset =
-          valueContentEnd > keyOffset ? valueContentEnd - 1 : keyOffset;
-        const endLine = lineCounter.linePos(endOffset).line;
-        const decorationIds = editorInstance.deltaDecorations(
-          highlightStateRef.current.decorationIds,
+        const startLine = model.getPositionAt(pair.key.range[0]).lineNumber;
+        const endLine = model.getPositionAt(
+          Math.max(pair.key.range[0], pair.value.range[1] - 1),
+        ).lineNumber;
+
+        rangeRef.current = { startLine, endLine };
+        decorationsRef.current = editorInstance.deltaDecorations(
+          decorationsRef.current,
           [
             {
               range: new monacoInstance.Range(startLine, 1, endLine, 1),
@@ -112,74 +101,45 @@ export function useYamlHighlight(
             },
           ],
         );
-
-        highlightStateRef.current = {
-          defName,
+        editorInstance.revealLineInCenter(
           startLine,
-          endLine,
-          decorationIds,
-        };
-        // ScrollType.Immediate (1) sets scroll synchronously — prevents Monaco's
-        // own initial-render requestAnimationFrame from resetting it to position 0.
-        editorInstance.revealLinesInCenter(startLine, endLine, 1);
+          monacoInstance.editor.ScrollType.Immediate,
+        );
       } catch {
-        // If YAML parsing fails, do nothing
+        // YAML parsing failure — nothing to highlight
       }
     },
-    [editorRef, monacoRef],
+    [editorRef, monacoRef, clearHighlight],
   );
-  const clearNodeDefHighlight = useCallback(() => {
-    const editorInstance = editorRef.current;
-
-    if (!editorInstance) return;
-    applyHighlightClear(editorInstance);
-  }, [applyHighlightClear, editorRef]);
   /**
-   * Call inside Monaco's `onMount` after setting `editorRef.current`.
-   * Reveals the current `highlightDef` (if any) and registers the mousedown
-   * handler that clears the highlight on outside-range clicks.
+   * Call inside Monaco's `onMount`. Reveals the current highlight (if any)
+   * and registers a click handler that clears it on outside-range clicks.
    */
   const setupHighlightOnMount = useCallback(
     (editorInstance: editor.IStandaloneCodeEditor) => {
       if (highlightDefRef.current) {
-        revealNodeDef(highlightDefRef.current);
+        setHighlight(highlightDefRef.current);
       }
       editorInstance.onMouseDown((e) => {
-        const state = highlightStateRef.current;
+        const { startLine, endLine } = rangeRef.current ?? {};
 
-        if (
-          !state.defName ||
-          state.startLine === null ||
-          state.endLine === null
-        ) {
-          return;
-        }
+        if (startLine === undefined || endLine === undefined) return;
 
-        const clickedLine = e.target.position?.lineNumber;
+        const line = e.target.position?.lineNumber;
 
-        if (
-          clickedLine === undefined ||
-          clickedLine < state.startLine ||
-          clickedLine > state.endLine
-        ) {
-          applyHighlightClear(editorInstance);
-          onHighlightClearRef.current?.();
-        }
+        if (line !== undefined && line >= startLine && line <= endLine) return;
+
+        clearHighlight(true);
       });
     },
-    [applyHighlightClear, revealNodeDef],
+    [setHighlight, clearHighlight],
   );
 
   // React to highlightDef changes after the editor is already mounted
   useEffect(() => {
     if (!editorRef.current) return;
-
-    if (highlightDef) {
-      revealNodeDef(highlightDef);
-    } else {
-      clearNodeDefHighlight();
-    }
-  }, [clearNodeDefHighlight, editorRef, highlightDef, revealNodeDef]);
+    setHighlight(highlightDef ?? null);
+  }, [highlightDef, editorRef, setHighlight]);
 
   return { setupHighlightOnMount };
 }

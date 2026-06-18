@@ -10,28 +10,27 @@ import { useCallback, type MouseEvent } from "react";
 import { useWorkflowGraphHost } from "../../contexts/workflow-graph-host.context";
 import { useWorkflowNode } from "../../hooks/useWorkflowNode";
 
+const BASE_CLASS =
+  "nodrag nopan workflow-node-see-code workflow-node-see-code-button";
+
 export const GenericNodeSeeCodeButton = () => {
   const { translate, onViewNodeCode, activeCodeDefName } =
     useWorkflowGraphHost();
   const { taskName, bindingName, stepPath } = useWorkflowNode();
   const defName = bindingName ?? taskName;
-  const isVisible = !!defName && !!stepPath;
   const isActive = !!defName && activeCodeDefName === defName;
   const handleClick = useCallback(
     (event: MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
       event.stopPropagation();
-
-      if (!defName) {
-        return;
+      if (defName) {
+        onViewNodeCode?.(defName);
       }
-
-      onViewNodeCode?.(defName);
     },
     [defName, onViewNodeCode],
   );
 
-  if (!isVisible) {
+  if (!defName || !stepPath) {
     return null;
   }
 
@@ -40,7 +39,11 @@ export const GenericNodeSeeCodeButton = () => {
   return (
     <button
       type="button"
-      className={`nodrag nopan workflow-node-see-code workflow-node-see-code-button${isActive ? " workflow-node-see-code-button--active" : ""}`}
+      className={
+        isActive
+          ? `${BASE_CLASS} workflow-node-see-code-button--active`
+          : BASE_CLASS
+      }
       aria-label={label}
       aria-pressed={isActive}
       title={label}
