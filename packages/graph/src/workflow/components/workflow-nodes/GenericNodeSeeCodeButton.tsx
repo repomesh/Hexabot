@@ -34,19 +34,13 @@ export const GenericNodeSeeCodeButton = () => {
     return null;
   }
 
-  const label = translate("button.see_definition");
-
   return (
     <button
       type="button"
-      className={
-        isActive
-          ? `${BASE_CLASS} workflow-node-see-code-button--active`
-          : BASE_CLASS
-      }
-      aria-label={label}
+      className={`${BASE_CLASS}${isActive ? " workflow-node-see-code-button--active" : ""}`}
+      aria-label={translate("button.see_definition")}
       aria-pressed={isActive}
-      title={label}
+      title={translate("button.see_definition")}
       onClick={handleClick}
     >
       <Code size={14} />

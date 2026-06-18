@@ -178,10 +178,10 @@ export const Workflow = () => {
   const graphColorMode: WorkflowGraphColorMode =
     mode === "light" || mode === "dark" ? mode : "system";
   const workflowGraphRef = useRef<WorkflowGraphHandle | null>(null);
-  const [activeCodeDef, setActiveCodeDef] = useState<string | null>(null);
+  const [activeCodeDef, setActiveCodeDef] = useState<string>();
   const setActive = useCallback((defName?: string | null) => {
     setActiveCodeDef((prev) =>
-      !defName ? null : prev === defName ? null : defName,
+      !defName ? undefined : prev === defName ? undefined : defName,
     );
   }, []);
   const activeCodeDefRef = useRef(activeCodeDef);
@@ -189,14 +189,11 @@ export const Workflow = () => {
   activeCodeDefRef.current = activeCodeDef;
   const executionStates = useWorkflowExecutionState(selectedFlowId);
 
-  // Clear YAML highlight whenever the definition content changes.
-  // Intentionally depends only on `yaml` — activeCodeDef is read via ref
-  // to avoid the effect firing when the highlight is first activated.
+  // Clear YAML highlight whenever the YAML content changes.
+  // activeCodeDef is read via ref to avoid re-firing when the highlight is first set.
   useEffect(() => {
-    if (activeCodeDefRef.current) {
-      setActive(null);
-    }
-  }, [yaml, setActive]);
+    if (activeCodeDefRef.current) setActiveCodeDef(undefined);
+  }, [yaml]);
   const focusNodeIds = useMemo(
     () =>
       typeof nodeIds === "string"
@@ -878,7 +875,7 @@ export const Workflow = () => {
       bindingCatalog: bindingsByName,
       executionStates,
       layoutDirection: direction,
-      activeCodeDefName: activeCodeDef ?? undefined,
+      activeCodeDefName: activeCodeDef,
     }),
     [
       actionsByName,
@@ -945,7 +942,7 @@ export const Workflow = () => {
       <FlowsDrawer
         onNew={handleNewWorkflow}
         onEdit={handleEditWorkflow}
-        activeCodeDef={activeCodeDef ?? undefined}
+        activeCodeDef={activeCodeDef}
         onActiveDefChange={setActive}
       />
       <StyledBox>
