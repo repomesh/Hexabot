@@ -8,7 +8,7 @@ overrides:
   '@babel/core': 7.29.7
   '@opentelemetry/core': 2.8.0
   ajv@8: 8.20.0
-  dompurify: 3.4.9
+  dompurify: 3.4.11
   glob: 13.0.6
   ip-address: 10.1.1
   js-yaml: 4.2.0
@@ -21,6 +21,8 @@ overrides:
   protobufjs: 7.6.3
   uuid: 11.1.1
   ws: 8.21.0
+  multer: 2.2.0
+  undici: 7.28.0
 
 importers:
 
@@ -176,13 +178,13 @@ importers:
         version: 11.4.2(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.19)(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)
       '@nestjs/typeorm':
         specifier: ^11.0.1
-        version: 11.0.1(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.19)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(better-sqlite3@12.9.0)(mongodb@6.20.0(socks@2.8.7))(pg-query-stream@4.10.3(pg@8.16.3))(pg@8.16.3)(redis@5.8.3)(ts-node@10.9.2(@swc/core@1.15.32)(@types/node@20.12.12)(typescript@5.9.3)))
+        version: 11.0.1(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.19)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@0.3.30(babel-plugin-macros@3.1.0)(better-sqlite3@12.9.0)(mongodb@6.20.0(socks@2.8.7))(pg-query-stream@4.10.3(pg@8.16.3))(pg@8.16.3)(redis@5.8.3)(ts-node@10.9.2(@swc/core@1.15.32)(@types/node@20.12.12)(typescript@5.9.3)))
       '@nestjs/websockets':
         specifier: ^11.1.19
         version: 11.1.19(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.19)(@nestjs/platform-socket.io@11.1.19)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@rekog/mcp-nest':
         specifier: ^1.9.9
-        version: 1.9.9(zbiq575kynseax2jbnh7ldd5my)
+        version: 1.9.9(hpe5jbywgrrhcddcw5yhy5yl2e)
       '@resvg/resvg-js':
         specifier: ^2.6.2
         version: 2.6.2
@@ -218,7 +220,7 @@ importers:
         version: 0.15.1
       connect-typeorm:
         specifier: ^2.0.0
-        version: 2.0.0(typeorm@0.3.28(babel-plugin-macros@3.1.0)(better-sqlite3@12.9.0)(mongodb@6.20.0(socks@2.8.7))(pg-query-stream@4.10.3(pg@8.16.3))(pg@8.16.3)(redis@5.8.3)(ts-node@10.9.2(@swc/core@1.15.32)(@types/node@20.12.12)(typescript@5.9.3)))
+        version: 2.0.0(typeorm@0.3.30(babel-plugin-macros@3.1.0)(better-sqlite3@12.9.0)(mongodb@6.20.0(socks@2.8.7))(pg-query-stream@4.10.3(pg@8.16.3))(pg@8.16.3)(redis@5.8.3)(ts-node@10.9.2(@swc/core@1.15.32)(@types/node@20.12.12)(typescript@5.9.3)))
       cookie-parser:
         specifier: ^1.4.7
         version: 1.4.7
@@ -265,8 +267,8 @@ importers:
         specifier: ^10.5.1
         version: 10.5.1(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.19)(class-validator@0.15.1)(rxjs@7.8.2)
       nodemailer:
-        specifier: ^8.0.11
-        version: 8.0.11
+        specifier: ^9.0.1
+        version: 9.0.1
       p-limit:
         specifier: ^3.1.0
         version: 3.1.0
@@ -307,8 +309,8 @@ importers:
         specifier: ^11.0.0
         version: 11.0.0
       typeorm:
-        specifier: ^0.3.28
-        version: 0.3.28(babel-plugin-macros@3.1.0)(better-sqlite3@12.9.0)(mongodb@6.20.0(socks@2.8.7))(pg-query-stream@4.10.3(pg@8.16.3))(pg@8.16.3)(redis@5.8.3)(ts-node@10.9.2(@swc/core@1.15.32)(@types/node@20.12.12)(typescript@5.9.3))
+        specifier: ^0.3.29
+        version: 0.3.30(babel-plugin-macros@3.1.0)(better-sqlite3@12.9.0)(mongodb@6.20.0(socks@2.8.7))(pg-query-stream@4.10.3(pg@8.16.3))(pg@8.16.3)(redis@5.8.3)(ts-node@10.9.2(@swc/core@1.15.32)(@types/node@20.12.12)(typescript@5.9.3))
       yaml:
         specifier: ^2.8.3
         version: 2.8.3
@@ -634,8 +636,8 @@ importers:
         specifier: ^1.11.13
         version: 1.11.18
       dompurify:
-        specifier: 3.4.9
-        version: 3.4.9
+        specifier: 3.4.11
+        version: 3.4.11
       i18next-http-backend:
         specifier: ^3.0.5
         version: 3.0.6(encoding@0.1.13)
@@ -874,8 +876,8 @@ importers:
         specifier: ^1.11.12
         version: 1.11.18
       dompurify:
-        specifier: 3.4.9
-        version: 3.4.9
+        specifier: 3.4.11
+        version: 3.4.11
       emoji-js:
         specifier: ^3.8.0
         version: 3.9.0
@@ -6064,6 +6066,14 @@ packages:
       babel-plugin-macros:
         optional: true
 
+  dedent@1.7.2:
+    resolution: {integrity: sha512-WzMx3mW98SN+zn3hgemf4OzdmyNhhhKz5Ay0pUfQiMQ3e1g+xmTJWp/pKdwKVXhdSkAEGIIzqeuWrL3mV/AXbA==}
+    peerDependencies:
+      babel-plugin-macros: ^3.1.0
+    peerDependenciesMeta:
+      babel-plugin-macros:
+        optional: true
+
   deep-diff@1.0.2:
     resolution: {integrity: sha512-aWS3UIVH+NPGCD1kki+DCU9Dua032iSsO43LqQpcs4R3+dVv7tX0qBGjiVHJHjplsoUM2XRO/KB92glqc68awg==}
     deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
@@ -6161,8 +6171,8 @@ packages:
     resolution: {integrity: sha512-cgwlv/1iFQiFnU96XXgROh8xTeetsnJiDsTc7TYCLFd9+/WNkIqPTxiM/8pSd8VIrhXGTf1Ny1q1hquVqDJB5w==}
     engines: {node: '>= 4'}
 
-  dompurify@3.4.9:
-    resolution: {integrity: sha512-4dPSRMRDqHvs0V4YDFCsaIZo4if5u0xM+llyxiM2fwuZFdKArUBAF3VtI2+n8NKg9P870WMdYk0UhqQNoWXbfQ==}
+  dompurify@3.4.11:
+    resolution: {integrity: sha512-zhlUV12GsaRzMsf9q5M254YhA4+VuF0fG+QFqu6aYpoGlKtz+w8//jBcGVYBgQkR5GHjUomejY84AV+/uPbWdw==}
 
   domutils@2.8.0:
     resolution: {integrity: sha512-w96Cjofp72M5IIhpjgobBimYEfoPjx1Vx0BSX9P30WBdZW2WIKU0T1Bd0kz2eNZ9ikjKgHbEyKx8BB6H1L3h3A==}
@@ -8246,8 +8256,8 @@ packages:
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
-  multer@2.1.1:
-    resolution: {integrity: sha512-mo+QTzKlx8R7E5ylSXxWzGoXoZbOsRMpyitcht8By2KHvMbf3tjwosZ/Mu/XYU6UuJ3VZnODIrak5ZrPiPyB6A==}
+  multer@2.2.0:
+    resolution: {integrity: sha512-6rdyFg2kLrMh9Jee7/BMPuV9lEAd7lLW2YUpF9/YxR7njyoUwwQ0ZPh3TaIY50Sw6vlyD2HW3wGOkTS4P79xrQ==}
     engines: {node: '>= 10.16.0'}
 
   mute-stream@0.0.8:
@@ -8377,8 +8387,8 @@ packages:
   node-releases@2.0.38:
     resolution: {integrity: sha512-3qT/88Y3FbH/Kx4szpQQ4HzUbVrHPKTLVpVocKiLfoYvw9XSGOX2FmD2d6DrXbVYyAQTF2HeF6My8jmzx7/CRw==}
 
-  nodemailer@8.0.11:
-    resolution: {integrity: sha512-nrO/pDAUKl+wXX+lx16tDLbnm0fW6sK/x8mgohaCpg+CdCEl482bD4tCuAZk2DyliruiNTIZxRCoWkDqJEnAiA==}
+  nodemailer@9.0.1:
+    resolution: {integrity: sha512-Gwv8SQewT616ZM/URn0H54b8PWo/Wum7md3EW2aWy1lO27+WZCX+Xyak3J+NlmHUjDh5ME+uesJUDRbR3Ye8Bw==}
     engines: {node: '>=6.0.0'}
 
   normalize-path@3.0.0:
@@ -10041,8 +10051,8 @@ packages:
   typedarray@0.0.6:
     resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
 
-  typeorm@0.3.28:
-    resolution: {integrity: sha512-6GH7wXhtfq2D33ZuRXYwIsl/qM5685WZcODZb7noOOcRMteM9KF2x2ap3H0EBjnSV0VO4gNAfJT5Ukp0PkOlvg==}
+  typeorm@0.3.30:
+    resolution: {integrity: sha512-8T35PzjefOdqc2ZR9mwLQj0pUGp6lQhMbK2EvVMwJVJWlaoHm0v/Q6dThNOZkFchD+0yMg8gwjKM28ePiLSXSQ==}
     engines: {node: '>=16.13.0'}
     hasBin: true
     peerDependencies:
@@ -10149,12 +10159,8 @@ packages:
   undici-types@7.16.0:
     resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
 
-  undici@6.27.0:
-    resolution: {integrity: sha512-YmfV3YnEDzXRC5lZ2jWtWWHKGUm1zIt8AhesR1tens+HTNv+YZlN/dp6G727LOvMJ8xjP9Be7Y2Sdr96LDm+pg==}
-    engines: {node: '>=18.17'}
-
-  undici@7.25.0:
-    resolution: {integrity: sha512-xXnp4kTyor2Zq+J1FfPI6Eq3ew5h6Vl0F/8d9XU5zZQf1tX9s2Su1/3PiMmUANFULpmksxkClamIZcaUqryHsQ==}
+  undici@7.28.0:
+    resolution: {integrity: sha512-cRZYrTDwWznlnRiPjggAGxZXanty6M8RV1ff8Wm4LWXBp7/IG8v5DnOm74DtUBp9OONpK75YlPnIjQqX0dBDtA==}
     engines: {node: '>=20.18.1'}
 
   unicode-canonical-property-names-ecmascript@2.0.1:
@@ -13337,7 +13343,7 @@ snapshots:
       '@nestjs/core': 11.1.19(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.19)(@nestjs/websockets@11.1.19)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       cors: 2.8.6
       express: 5.2.1
-      multer: 2.1.1
+      multer: 2.2.0
       path-to-regexp: 8.4.2
       tslib: 2.8.1
     transitivePeerDependencies:
@@ -13405,13 +13411,13 @@ snapshots:
     optionalDependencies:
       '@nestjs/platform-express': 11.1.19(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.19)
 
-  '@nestjs/typeorm@11.0.1(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.19)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(better-sqlite3@12.9.0)(mongodb@6.20.0(socks@2.8.7))(pg-query-stream@4.10.3(pg@8.16.3))(pg@8.16.3)(redis@5.8.3)(ts-node@10.9.2(@swc/core@1.15.32)(@types/node@20.12.12)(typescript@5.9.3)))':
+  '@nestjs/typeorm@11.0.1(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.19)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@0.3.30(babel-plugin-macros@3.1.0)(better-sqlite3@12.9.0)(mongodb@6.20.0(socks@2.8.7))(pg-query-stream@4.10.3(pg@8.16.3))(pg@8.16.3)(redis@5.8.3)(ts-node@10.9.2(@swc/core@1.15.32)(@types/node@20.12.12)(typescript@5.9.3)))':
     dependencies:
       '@nestjs/common': 11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/core': 11.1.19(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.19)(@nestjs/websockets@11.1.19)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       reflect-metadata: 0.2.2
       rxjs: 7.8.2
-      typeorm: 0.3.28(babel-plugin-macros@3.1.0)(better-sqlite3@12.9.0)(mongodb@6.20.0(socks@2.8.7))(pg-query-stream@4.10.3(pg@8.16.3))(pg@8.16.3)(redis@5.8.3)(ts-node@10.9.2(@swc/core@1.15.32)(@types/node@20.12.12)(typescript@5.9.3))
+      typeorm: 0.3.30(babel-plugin-macros@3.1.0)(better-sqlite3@12.9.0)(mongodb@6.20.0(socks@2.8.7))(pg-query-stream@4.10.3(pg@8.16.3))(pg@8.16.3)(redis@5.8.3)(ts-node@10.9.2(@swc/core@1.15.32)(@types/node@20.12.12)(typescript@5.9.3))
 
   '@nestjs/websockets@11.1.19(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.19)(@nestjs/platform-socket.io@11.1.19)(reflect-metadata@0.2.2)(rxjs@7.8.2)':
     dependencies:
@@ -14378,7 +14384,7 @@ snapshots:
     dependencies:
       '@redis/client': 5.8.3
 
-  '@rekog/mcp-nest@1.9.9(zbiq575kynseax2jbnh7ldd5my)':
+  '@rekog/mcp-nest@1.9.9(hpe5jbywgrrhcddcw5yhy5yl2e)':
     dependencies:
       '@modelcontextprotocol/sdk': 1.29.0(zod@4.3.6)
       '@nestjs/common': 11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -14388,7 +14394,7 @@ snapshots:
       '@nestjs/passport': 11.0.5(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(passport@0.7.0)
       cookie-parser: 1.4.7
       express: 5.2.1
-      multer: 2.1.1
+      multer: 2.2.0
       passport: 0.7.0
       passport-azure-ad-oauth2: 0.0.4
       passport-github: 1.1.0
@@ -14398,8 +14404,8 @@ snapshots:
       rxjs: 7.8.2
       zod: 4.3.6
     optionalDependencies:
-      '@nestjs/typeorm': 11.0.1(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.19)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@0.3.28(babel-plugin-macros@3.1.0)(better-sqlite3@12.9.0)(mongodb@6.20.0(socks@2.8.7))(pg-query-stream@4.10.3(pg@8.16.3))(pg@8.16.3)(redis@5.8.3)(ts-node@10.9.2(@swc/core@1.15.32)(@types/node@20.12.12)(typescript@5.9.3)))
-      typeorm: 0.3.28(babel-plugin-macros@3.1.0)(better-sqlite3@12.9.0)(mongodb@6.20.0(socks@2.8.7))(pg-query-stream@4.10.3(pg@8.16.3))(pg@8.16.3)(redis@5.8.3)(ts-node@10.9.2(@swc/core@1.15.32)(@types/node@20.12.12)(typescript@5.9.3))
+      '@nestjs/typeorm': 11.0.1(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.19)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@0.3.30(babel-plugin-macros@3.1.0)(better-sqlite3@12.9.0)(mongodb@6.20.0(socks@2.8.7))(pg-query-stream@4.10.3(pg@8.16.3))(pg@8.16.3)(redis@5.8.3)(ts-node@10.9.2(@swc/core@1.15.32)(@types/node@20.12.12)(typescript@5.9.3)))
+      typeorm: 0.3.30(babel-plugin-macros@3.1.0)(better-sqlite3@12.9.0)(mongodb@6.20.0(socks@2.8.7))(pg-query-stream@4.10.3(pg@8.16.3))(pg@8.16.3)(redis@5.8.3)(ts-node@10.9.2(@swc/core@1.15.32)(@types/node@20.12.12)(typescript@5.9.3))
 
   '@remix-run/router@1.23.3': {}
 
@@ -16129,7 +16135,7 @@ snapshots:
       parse5: 7.3.0
       parse5-htmlparser2-tree-adapter: 7.1.0
       parse5-parser-stream: 7.1.2
-      undici: 6.27.0
+      undici: 7.28.0
       whatwg-mimetype: 4.0.0
 
   cheerio@1.1.2:
@@ -16143,7 +16149,7 @@ snapshots:
       parse5: 7.3.0
       parse5-htmlparser2-tree-adapter: 7.1.0
       parse5-parser-stream: 7.1.2
-      undici: 7.25.0
+      undici: 7.28.0
       whatwg-mimetype: 4.0.0
 
   chokidar@3.6.0:
@@ -16305,13 +16311,13 @@ snapshots:
 
   confbox@0.2.2: {}
 
-  connect-typeorm@2.0.0(typeorm@0.3.28(babel-plugin-macros@3.1.0)(better-sqlite3@12.9.0)(mongodb@6.20.0(socks@2.8.7))(pg-query-stream@4.10.3(pg@8.16.3))(pg@8.16.3)(redis@5.8.3)(ts-node@10.9.2(@swc/core@1.15.32)(@types/node@20.12.12)(typescript@5.9.3))):
+  connect-typeorm@2.0.0(typeorm@0.3.30(babel-plugin-macros@3.1.0)(better-sqlite3@12.9.0)(mongodb@6.20.0(socks@2.8.7))(pg-query-stream@4.10.3(pg@8.16.3))(pg@8.16.3)(redis@5.8.3)(ts-node@10.9.2(@swc/core@1.15.32)(@types/node@20.12.12)(typescript@5.9.3))):
     dependencies:
       '@types/debug': 0.0.31
       '@types/express-session': 1.18.2
       debug: 4.4.3
       express-session: 1.18.2
-      typeorm: 0.3.28(babel-plugin-macros@3.1.0)(better-sqlite3@12.9.0)(mongodb@6.20.0(socks@2.8.7))(pg-query-stream@4.10.3(pg@8.16.3))(pg@8.16.3)(redis@5.8.3)(ts-node@10.9.2(@swc/core@1.15.32)(@types/node@20.12.12)(typescript@5.9.3))
+      typeorm: 0.3.30(babel-plugin-macros@3.1.0)(better-sqlite3@12.9.0)(mongodb@6.20.0(socks@2.8.7))(pg-query-stream@4.10.3(pg@8.16.3))(pg@8.16.3)(redis@5.8.3)(ts-node@10.9.2(@swc/core@1.15.32)(@types/node@20.12.12)(typescript@5.9.3))
     transitivePeerDependencies:
       - supports-color
 
@@ -16704,6 +16710,10 @@ snapshots:
     optionalDependencies:
       babel-plugin-macros: 3.1.0
 
+  dedent@1.7.2(babel-plugin-macros@3.1.0):
+    optionalDependencies:
+      babel-plugin-macros: 3.1.0
+
   deep-diff@1.0.2: {}
 
   deep-extend@0.6.0: {}
@@ -16789,7 +16799,7 @@ snapshots:
     dependencies:
       domelementtype: 2.3.0
 
-  dompurify@3.4.9:
+  dompurify@3.4.11:
     optionalDependencies:
       '@types/trusted-types': 2.0.7
 
@@ -18716,7 +18726,7 @@ snapshots:
       saxes: 6.0.0
       symbol-tree: 3.2.4
       tough-cookie: 6.0.0
-      undici: 7.25.0
+      undici: 7.28.0
       w3c-xmlserializer: 5.0.0
       webidl-conversions: 8.0.1
       whatwg-mimetype: 5.0.0
@@ -19652,7 +19662,7 @@ snapshots:
 
   monaco-editor@0.55.1:
     dependencies:
-      dompurify: 3.4.9
+      dompurify: 3.4.11
       marked: 14.0.0
 
   monaco-languageserver-types@0.4.0:
@@ -19717,7 +19727,7 @@ snapshots:
 
   ms@2.1.3: {}
 
-  multer@2.1.1:
+  multer@2.2.0:
     dependencies:
       append-field: 1.0.0
       busboy: 1.6.0
@@ -19844,7 +19854,7 @@ snapshots:
 
   node-releases@2.0.38: {}
 
-  nodemailer@8.0.11: {}
+  nodemailer@9.0.1: {}
 
   normalize-path@3.0.0: {}
 
@@ -21725,7 +21735,7 @@ snapshots:
 
   typedarray@0.0.6: {}
 
-  typeorm@0.3.28(babel-plugin-macros@3.1.0)(better-sqlite3@12.9.0)(mongodb@6.20.0(socks@2.8.7))(pg-query-stream@4.10.3(pg@8.16.3))(pg@8.16.3)(redis@5.8.3)(ts-node@10.9.2(@swc/core@1.15.32)(@types/node@20.12.12)(typescript@5.9.3)):
+  typeorm@0.3.30(babel-plugin-macros@3.1.0)(better-sqlite3@12.9.0)(mongodb@6.20.0(socks@2.8.7))(pg-query-stream@4.10.3(pg@8.16.3))(pg@8.16.3)(redis@5.8.3)(ts-node@10.9.2(@swc/core@1.15.32)(@types/node@20.12.12)(typescript@5.9.3)):
     dependencies:
       '@sqltools/formatter': 1.2.5
       ansis: 4.2.0
@@ -21733,7 +21743,7 @@ snapshots:
       buffer: 6.0.3
       dayjs: 1.11.20
       debug: 4.4.3
-      dedent: 1.7.0(babel-plugin-macros@3.1.0)
+      dedent: 1.7.2(babel-plugin-macros@3.1.0)
       dotenv: 16.6.1
       glob: 13.0.6
       reflect-metadata: 0.2.2
@@ -21795,9 +21805,7 @@ snapshots:
 
   undici-types@7.16.0: {}
 
-  undici@6.27.0: {}
-
-  undici@7.25.0: {}
+  undici@7.28.0: {}
 
   unicode-canonical-property-names-ecmascript@2.0.1: {}
 
