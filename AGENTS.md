@@ -9,7 +9,7 @@ This file defines repository-wide instructions for AI coding agents working in t
 - For cross-package changes, follow this root file plus each relevant package-level file.
 
 ## Monorepo layout
-- Workspace manager: PNPM (`pnpm@9.12.0`).
+- Workspace manager: PNPM (`pnpm@11.8.0`).
 - Task orchestrator: Turborepo (`turbo.json`).
 - Workspace packages are all under `packages/`:
   - `packages/api` (`@hexabot-ai/api`)

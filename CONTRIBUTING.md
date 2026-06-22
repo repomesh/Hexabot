@@ -24,13 +24,13 @@ Report vulnerabilities privately to `hello@hexabot.ai` (see `SECURITY.md`) with:
 ## Development prerequisites
 
 - Node.js `^24.17.0`
-- PNPM `9.12.0` (via Corepack)
+- PNPM `11.8.0` (via Corepack)
 - Git
 
 From the repository root:
 
 ```bash
-corepack enable pnpm@9.12.0
+corepack enable pnpm@11.8.0
 pnpm install
 ```
 
