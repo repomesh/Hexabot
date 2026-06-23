@@ -1,4 +1,4 @@
-FROM node:20.19-alpine AS base
+FROM node:24.17-alpine AS base
 
 ENV PNPM_HOME=/pnpm
 ENV PATH="${PNPM_HOME}:${PATH}"
@@ -9,12 +9,12 @@ WORKDIR /app
 
 FROM base AS deps
 
-COPY package.json pnpm-workspace.yaml turbo.json pnpm-lock.yaml .npmrc ./
+COPY package.json pnpm-workspace.yaml turbo.json pnpm-lock.yaml ./
 COPY packages/api/package.json packages/api/package.json
 COPY packages/frontend/package.json packages/frontend/package.json
 COPY packages/widget/package.json packages/widget/package.json
 
-RUN pnpm install --filter @hexabot-ai/widget... --prod=false
+RUN pnpm install --filter @hexabot-ai/widget... --prod=false --network-concurrency 4
 
 FROM deps AS development
 
@@ -45,7 +45,7 @@ COPY packages/widget ./packages/widget
 
 RUN pnpm --filter @hexabot-ai/widget... run build
 
-FROM node:20.19-alpine AS production
+FROM node:24.17-alpine AS production
 
 ENV PNPM_HOME=/pnpm
 ENV PATH="${PNPM_HOME}:${PATH}"
